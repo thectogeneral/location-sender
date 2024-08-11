@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location Sender</title>
+    <script>
+        async function sendLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(async (position) => {
+                    const { latitude, longitude } = position.coords;
+
+                    try {
+                        const response = await fetch('http://localhost:3000/update-location', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ latitude, longitude }),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+
+                        console.log({message: 'Data sent successfully'})
+                    } catch (error) {
+                        console.error('Error sending location data:', error);
+                    }
+                }, (error) => {
+                    console.error('Error getting location:', error);
+                });
+            } else {
+                console.log('Geolocation is not supported by this browser.');
+            }
+        }
+
+        window.onload = sendLocation;
+    </script>
+</head>
+<body>
+    <h1>Location Sender</h1>
+</body>
+</html>
